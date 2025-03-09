@@ -1,0 +1,27 @@
+name: MoneyNest CI
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Setup JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Set up Kotlin
+        uses: fwilhe2/setup-kotlin@v1
+        with:
+          version: '1.9.0'
+
+      - name: Build Project
+        run: ./gradlew build
+
+      - name: Run Detekt
+        run: ./gradlew detekt
