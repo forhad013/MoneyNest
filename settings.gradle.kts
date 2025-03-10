@@ -1,4 +1,3 @@
-enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 pluginManagement {
     repositories {
         google()
@@ -18,3 +17,4 @@ rootProject.name = "MoneyNest"
 include(":app:androidApp")
 include(":app:iosApp")
 include(":app")
+include(":konsistTest")

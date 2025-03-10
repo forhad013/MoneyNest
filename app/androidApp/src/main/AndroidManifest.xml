@@ -4,6 +4,7 @@
     <application
         android:allowBackup="false"
         android:supportsRtl="true"
+        android:name="com.greenrobotdev.moneynest.android.Application"
         android:theme="@style/AppTheme">
         <activity
             android:name=".MainActivity"

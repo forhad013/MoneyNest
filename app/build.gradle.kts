@@ -1,10 +1,9 @@
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.kotlinSerialization)
-
 }
 
 kotlin {
@@ -14,7 +13,13 @@ kotlin {
     iosX64()
     iosArm64()
     iosSimulatorArm64()
-    jvm("desktop")
+    jvm {
+        testRuns.named("test") {
+            executionTask.configure {
+                useJUnitPlatform()
+            }
+        }
+    }
 
     sourceSets {
         commonMain.dependencies {
@@ -24,6 +29,14 @@ kotlin {
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
+            implementation(kotlin("test-common"))
+            implementation(kotlin("test-annotations-common"))
+        }
+
+        val jvmTest by getting {
+            dependencies {
+                implementation("com.lemonappdev:konsist:0.17.2")
+            }
         }
     }
 }

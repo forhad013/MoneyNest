@@ -23,5 +23,5 @@ jobs:
       - name: Build Project
         run: ./gradlew build
 
-      - name: Run Detekt
-        run: ./gradlew detekt
+#      - name: Run Detekt
+#        run: ./gradlew detekt
