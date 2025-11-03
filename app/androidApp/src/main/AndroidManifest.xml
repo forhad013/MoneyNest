@@ -2,9 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <application
+        android:name="com.greenrobotdev.linklibrary.android.Application"
         android:allowBackup="false"
+        android:label="@string/app_name"
         android:supportsRtl="true"
-        android:name="com.greenrobotdev.moneynest.android.Application"
         android:theme="@style/AppTheme">
         <activity
             android:name=".MainActivity"

@@ -1,4 +1,4 @@
-package com.greenrobotdev.moneynest
+package com.greenrobotdev.linklibrary
 
 import kotlin.test.Test
 

@@ -1,7 +1,7 @@
-package com.greenrobotdev.moneynest.android
+package com.greenrobotdev.linklibrary.android
 
 import android.app.Application
-import com.greenrobotdev.moneynest.di.appModule
+import com.greenrobotdev.linklibrary.di.appModule
 import org.koin.core.context.startKoin
 
 class Application : Application() {

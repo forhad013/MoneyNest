@@ -1,4 +1,4 @@
-package com.greenrobotdev.moneynest.android
+package com.greenrobotdev.linklibrary.android
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.shape.RoundedCornerShape

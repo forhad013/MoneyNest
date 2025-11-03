@@ -1,18 +1,25 @@
-
-
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
+    alias(libs.plugins.jetbrainsCompose)
     alias(libs.plugins.kotlinSerialization)
+    alias(libs.plugins.compose.compiler)
 }
 
 kotlin {
     androidTarget()
 
-    androidTarget()
-    iosX64()
-    iosArm64()
-    iosSimulatorArm64()
+    listOf(
+        iosX64(),
+        iosArm64(),
+        iosSimulatorArm64()
+    ).forEach { iosTarget ->
+        iosTarget.binaries.framework {
+            baseName = "shared"
+            isStatic = true
+        }
+    }
+
     jvm {
         testRuns.named("test") {
             executionTask.configure {
@@ -22,33 +29,55 @@ kotlin {
     }
 
     sourceSets {
-        commonMain.dependencies {
-            implementation(libs.ktor.client.core)
-            implementation(libs.koin.core)
-            implementation(libs.kotlinx.serialization.json)
+        val commonMain by getting {
+            dependencies {
+                // Compose
+                implementation(compose.runtime)
+                implementation(compose.foundation)
+                implementation(compose.material3)
+                implementation(compose.ui)
+                implementation(compose.materialIconsExtended)
+
+                // Koin
+                implementation(libs.koin.core)
+
+                // Ktor
+                implementation(libs.ktor.client.core)
+                implementation(libs.kotlinx.serialization.json)
+
+                // Decompose 
+                implementation(libs.decompose.router)
+                // Molecule
+                implementation(libs.molecule.runtime)
+//                implementation(libs.molecule.compose)
+            }
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
             implementation(kotlin("test-common"))
             implementation(kotlin("test-annotations-common"))
         }
-
-        val jvmTest by getting {
-            dependencies {
-                implementation("com.lemonappdev:konsist:0.17.2")
-            }
-        }
     }
 }
 
 android {
-    namespace = "com.greenrobotdev.moneynest"
-    compileSdk = 35
+    namespace = "com.greenrobotdev.linklibrary"
+    compileSdk = 36
+
     defaultConfig {
-        minSdk = 24
+        minSdk = 28
     }
+
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
+    }
+
+    buildFeatures {
+        compose = true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.4"
     }
 }
