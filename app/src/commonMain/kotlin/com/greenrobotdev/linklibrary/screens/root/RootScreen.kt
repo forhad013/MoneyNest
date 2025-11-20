@@ -1,62 +1,37 @@
 package com.greenrobotdev.linklibrary.screens.root
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.push
-import com.greenrobotdev.linklibrary.screens.home.RootScreen
-import com.greenrobotdev.linklibrary.screens.home.HomeViewModel
-import io.github.xxfast.decompose.router.rememberOnRoute
+import com.greenrobotdev.linklibrary.screens.add.AddLinkScreen
+import com.greenrobotdev.linklibrary.screens.details.LinkDetailScreen
+import com.greenrobotdev.linklibrary.screens.home.HomeScreen
 import io.github.xxfast.decompose.router.stack.RoutedContent
 import io.github.xxfast.decompose.router.stack.Router
 import io.github.xxfast.decompose.router.stack.rememberRouter
 
 @Composable
-fun RootScreen(
-    onNavigateToDetail: (String) -> Unit = {},
-    onAddLink: (String?) -> Unit = {}
-) {
-    val router: Router<RootScreen> = rememberRouter { listOf(RootScreen.Home) }
-
-    val viewModel: HomeViewModel = rememberOnRoute() { HomeViewModel(this) }
-
-    val state by viewModel.states.collectAsState()
-    val scope = rememberCoroutineScope()
+fun RootScreen() {
+    val router: Router<RootScreens> = rememberRouter { listOf(RootScreens.Home) }
 
     RoutedContent(
         router = router,
     ) { screen ->
         when (screen) {
-            is RootScreen.Home -> HomeContent(
-                state = state,
-                onRefresh = { viewModel.onRefresh() },
-                onToggleFavorite = { linkId ->
-                    viewModel.onToggleFavorite(linkId)
-                },
-                onLinkClick = { linkId ->
-                    router.push(RootScreen.LinkDetail(linkId))
-                    onNavigateToDetail(linkId)
-                },
-                onAddLink = { initialUrl ->
-                    router.push(RootScreen.AddLink(initialUrl))
-                    onAddLink(initialUrl)
-                }
+            is RootScreens.Home -> HomeScreen(
+                onNavigateToDetail = { linkId ->
+                    router.push(RootScreens.LinkDetail(linkId)) },
+                onAddLink = { initialUrl -> router.push(RootScreens.AddLink(initialUrl)) }
             )
 
-            is RootScreen.LinkDetail -> LinkDetailScreen(
+            is RootScreens.LinkDetail -> LinkDetailScreen(
                 linkId = screen.linkId,
                 onBack = { router.pop() }
             )
 
-            is RootScreen.AddLink -> AddLinkScreen(
+            is RootScreens.AddLink -> AddLinkScreen(
                 initialUrl = screen.initialUrl,
                 onBack = { router.pop() },
-                onLinkAdded = {
-                    viewModel.onRefresh()
-                    router.pop()
-                }
             )
         }
     }

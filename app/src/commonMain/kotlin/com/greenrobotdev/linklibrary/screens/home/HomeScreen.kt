@@ -34,12 +34,15 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -48,8 +51,8 @@ import io.github.xxfast.decompose.router.rememberOnRoute
 
 @Composable
 fun HomeScreen(
-    onNavigateToDetail: (String) -> Unit = {},
-    onAddLink: (String?) -> Unit = {}
+    onNavigateToDetail: (String) -> Unit,
+    onAddLink: (String?) -> Unit
 ) {
 
     val viewModel: HomeViewModel = rememberOnRoute() {
@@ -82,12 +85,27 @@ private fun HomeView(
         onRefresh()
     }
 
+    val pullToRefreshState = rememberPullToRefreshState()
+
+    LaunchedEffect(pullToRefreshState.isRefreshing) {
+        if (pullToRefreshState.isRefreshing) {
+            onRefresh()
+        }
+    }
+
+    LaunchedEffect(state.isLoading) {
+        if (!state.isLoading) {
+            pullToRefreshState.endRefresh()
+        }
+    }
+
     Scaffold(
+        modifier = Modifier.nestedScroll(pullToRefreshState.nestedScrollConnection),
         topBar = {
             TopAppBar(
                 title = {
                     Text(
-                        "Link Library",
+                        text = "Link Library",
                         style = MaterialTheme.typography.titleLarge.copy(
                             fontWeight = FontWeight.Bold
                         )
@@ -127,56 +145,62 @@ private fun HomeView(
             }
         }
     ) { paddingValues ->
-        when {
-            state.isLoading -> Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
-            }
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+        ) {
+            when {
+                state.isLoading && state.links.isNullOrEmpty() -> Box(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
+                }
 
-            state.error != null -> Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "Error: ${state.error}",
-                    color = MaterialTheme.colorScheme.error
-                )
-            }
-
-
-            state.links.isNullOrEmpty() -> Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "No link added",
-                    color = MaterialTheme.colorScheme.error
-                )
-            }
-
-            else -> LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-                    .padding(horizontal = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-                contentPadding = PaddingValues(vertical = 16.dp)
-            ) {
-
-                items(items = state.links) { link: Link ->
-                    LinkCard(
-                        link = link,
-                        onFavoriteClick = {},
-                        onClick = { onLinkClick(link.id) }
+                state.error != null -> Box(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "Error: ${state.error}",
+                        color = MaterialTheme.colorScheme.error
                     )
                 }
+
+
+                state.links.isNullOrEmpty() -> Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "No link added",
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+
+                else -> LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                    contentPadding = PaddingValues(vertical = 16.dp)
+                ) {
+                    items(items = state.links) { link: Link ->
+                        LinkCard(
+                            link = link,
+                            onFavoriteClick = { onToggleFavorite(link.id) },
+                            onClick = { onLinkClick(link.id) }
+                        )
+                    }
+                }
             }
+            PullToRefreshContainer(
+                state = pullToRefreshState,
+                modifier = Modifier.align(Alignment.TopCenter)
+            )
         }
     }
 }
@@ -267,4 +291,3 @@ private fun LinkCard(
         }
     }
 }
-

@@ -7,7 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.view.WindowCompat
-import com.greenrobotdev.linklibrary.screens.home.HomeScreen
+import com.greenrobotdev.linklibrary.screens.root.RootScreen
 import io.github.xxfast.decompose.router.LocalRouterContext
 import io.github.xxfast.decompose.router.RouterContext
 import io.github.xxfast.decompose.router.defaultRouterContext
@@ -23,7 +23,7 @@ class MainActivity : ComponentActivity() {
                 LocalRouterContext provides rootComponentContext
             ) {
                 MyApplicationTheme {
-                    HomeScreen()
+                    RootScreen()
                 }
             }
         }

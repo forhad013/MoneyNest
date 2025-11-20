@@ -3,13 +3,13 @@ package com.greenrobotdev.linklibrary.screens.root
 import kotlinx.serialization.Serializable
 
 @Serializable
-sealed class RootScreen {
+sealed class RootScreens {
     @Serializable
-    data object Home : RootScreen()
+    data object Home : RootScreens()
 
     @Serializable
-    data class LinkDetail(val linkId: String) : RootScreen()
+    data class LinkDetail(val linkId: String) : RootScreens()
 
     @Serializable
-    data class AddLink(val initialUrl: String? = null) : RootScreen()
+    data class AddLink(val initialUrl: String? = null) : RootScreens()
 }

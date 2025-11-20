@@ -44,6 +44,9 @@ kotlin {
                 // Ktor
                 implementation(libs.ktor.client.core)
                 implementation(libs.kotlinx.serialization.json)
+                
+                // Kotlinx DateTime
+                implementation(libs.kotlinx.datetime)
 
                 // Decompose 
                 implementation(libs.decompose.router)

@@ -1,7 +1,11 @@
 package com.greenrobotdev.linklibrary.model
 
+import kotlinx.datetime.Instant
+import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
+import kotlin.time.ExperimentalTime
 
+@OptIn(ExperimentalTime::class)
 @Serializable
 data class Link(
     val id: String,
@@ -9,6 +13,9 @@ data class Link(
     val url: String,
     val description: String = "",
     val isFavorite: Boolean = false,
+
+    @Contextual
+    val createdAt: Instant? = null,
     val tags: List<String> = emptyList()
 ) {
     companion object {
